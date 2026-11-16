@@ -5,72 +5,128 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ProtectTheGap — ช้อปให้สุด แต่อย่าลืมค่าส่ง</title>
 <style>
-  :root { --main:#00a88a; --main-dark:#00826b; --bg:#f3f5f6; --red:#e5484d; --text:#1d2327; --muted:#6b7780; }
+  @font-face { font-family:Anuphan; font-weight:400 700; font-display:swap; src:url(fonts/anuphan-thai.woff2) format('woff2'); unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC; }
+  @font-face { font-family:Anuphan; font-weight:400 700; font-display:swap; src:url(fonts/anuphan-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212; }
+  :root {
+    --main:#00806a; --main-dark:#006653; --tint:#e3f2ee; --bg:#f3f5f6; --line:#e3e7ea; --field:#8a959d;
+    --red:#c62f35; --red-tint:#fdf1f1; --text:#1d2327; --muted:#56636b;
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui, -apple-system, "Sukhumvit Set", "Noto Sans Thai", sans-serif; background:var(--bg); color:var(--text); }
-  main { max-width:480px; margin:0 auto; min-height:100vh; background:var(--bg); padding-bottom:140px; }
-  header { background:var(--main); color:#fff; padding:14px 16px; position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:10px; }
-  header h1 { font-size:18px; margin:0; flex:1; }
-  header button { background:none; border:0; color:#fff; font-size:15px; cursor:pointer; }
-  .test-banner { background:#fff4d6; color:#7a5b00; font-size:12px; padding:6px 16px; text-align:center; }
-  section { background:#fff; margin:10px 0; padding:14px 16px; }
-  h2 { font-size:15px; margin:0 0 10px; }
-  .hint { font-size:13px; color:var(--muted); margin:-4px 0 10px; }
-  label { display:block; margin:12px 0 4px; font-size:14px; }
-  input[type=number], input[type=text] { width:100%; padding:10px; font-size:16px; border:1px solid #ccd3d8; border-radius:6px; }
+  body { margin:0; font:15px/1.55 Anuphan, "Sukhumvit Set", "Noto Sans Thai", system-ui, sans-serif; background:var(--bg); color:var(--text); caret-color:var(--main); accent-color:var(--main); -webkit-font-smoothing:antialiased; }
+  ::selection { background:#bfe6db; color:var(--text); }
+  :focus-visible { outline:2px solid var(--main); outline-offset:2px; }
+  header :focus-visible { outline-color:#fff; }
+  button, input { font:inherit; }
+  .i { width:1em; height:1em; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.15em; }
+  main { max-width:480px; margin:0 auto; min-height:100vh; background:var(--bg); padding-bottom:150px; }
+  header { background:var(--main); color:#fff; padding:12px 16px; position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:10px; }
+  header h1 { font-size:20px; line-height:1.3; margin:0; flex:1; display:flex; align-items:center; gap:8px; letter-spacing:-.01em; }
+  header button { display:inline-flex; align-items:center; gap:6px; min-height:40px; background:none; border:0; color:#fff; font-size:15px; cursor:pointer; padding:0 4px; }
+  header button[aria-label] { font-size:22px; }
+  .test-banner { display:flex; justify-content:center; align-items:center; gap:6px; background:#fff4d6; color:#7a5b00; font-size:13px; padding:6px 16px; }
+  section { background:#fff; margin:10px 0; padding:18px 16px; }
+  h2 { font-size:18px; line-height:1.35; font-weight:600; margin:0 0 8px; display:flex; align-items:center; gap:8px; text-wrap:balance; }
+  h2 .i { color:var(--main-dark); }
+  .hint { font-size:14px; color:var(--muted); margin:0 0 14px; }
+  label { display:block; margin:16px 0 6px; font-size:15px; font-weight:500; }
+  input[type=number], input[type=text] { width:100%; padding:10px 12px; font-size:16px; border:1px solid var(--field); border-radius:8px; background:#fff; color:var(--text); }
+  input::placeholder { color:var(--muted); }
   .choices { display:flex; gap:8px; flex-wrap:wrap; }
-  .choices label { margin:0; padding:8px 12px; border:1px solid #ccd3d8; border-radius:20px; font-size:14px; cursor:pointer; }
-  .choices input { margin-right:4px; }
-  .btn { display:block; width:100%; padding:13px; font-size:16px; border:0; border-radius:6px; background:var(--main); color:#fff; cursor:pointer; margin-top:16px; }
-  .btn.ghost { background:#fff; color:var(--main); border:1px solid var(--main); }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:8px; }
-  .card { background:#fff; border-radius:6px; padding:12px; display:flex; flex-direction:column; gap:6px; }
-  .card .pic { font-size:44px; text-align:center; background:#eef8f6; border-radius:4px; padding:12px 0; }
-  .card .name { font-size:14px; min-height:2.6em; }
+  .choices label { margin:0; padding:8px 14px; border:1px solid var(--field); border-radius:999px; font-size:15px; font-weight:400; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+  .choices label:has(:checked) { border-color:var(--main); background:var(--tint); color:var(--main-dark); font-weight:600; }
+  .choices input[type=radio] { margin:0; }
+  .btn { display:flex; justify-content:center; align-items:center; gap:8px; width:100%; padding:13px; font-size:16px; font-weight:600; border:0; border-radius:8px; background:var(--main); color:#fff; cursor:pointer; margin-top:20px; }
+  .btn:hover { background:var(--main-dark); }
+  .btn:disabled { background:#d5dbdf; color:var(--muted); cursor:not-allowed; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:0 8px; }
+  .card { background:#fff; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px; }
+  .card .pic { display:grid; place-items:center; height:76px; background:var(--tint); color:var(--main-dark); border-radius:6px; font-size:32px; }
+  .card .pic .i { stroke-width:1.75; }
+  .card .name { font-size:15px; line-height:1.4; min-height:2.8em; }
   .card .price { color:var(--main-dark); font-weight:600; }
-  .card button { padding:8px; border:1px solid var(--main); background:#fff; color:var(--main); border-radius:4px; cursor:pointer; font-size:14px; }
+  .card .price .muted { font-weight:400; }
+  .card button { display:flex; justify-content:center; align-items:center; gap:6px; min-height:40px; padding:8px; border:1px solid var(--main); background:#fff; color:var(--main-dark); border-radius:6px; cursor:pointer; font-size:14px; font-weight:500; }
   .card button.in { background:var(--main); color:#fff; }
-  .row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #eef0f2; }
+  .row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); }
   .row:last-child { border-bottom:0; }
-  .row .ic { font-size:24px; width:32px; text-align:center; }
-  .row .grow { flex:1; font-size:14px; }
-  .row input[type=number] { width:96px; padding:6px; font-size:15px; text-align:right; }
-  .row .x { border:0; background:none; color:var(--muted); font-size:18px; cursor:pointer; }
+  .row .ic { display:grid; place-items:center; width:36px; height:36px; border-radius:6px; background:var(--tint); color:var(--main-dark); font-size:20px; }
+  .row .grow { flex:1; min-width:0; overflow-wrap:anywhere; }
+  .row input[type=number] { width:100px; padding:8px; font-size:15px; text-align:right; }
+  .row .x { display:grid; place-items:center; width:44px; height:44px; margin-right:-10px; border:0; background:none; color:var(--muted); font-size:20px; cursor:pointer; border-radius:6px; }
+  .row .x:hover { color:var(--red); background:var(--red-tint); }
   .money { font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .risk { border:1px solid #eef0f2; border-radius:6px; padding:10px; margin-bottom:10px; }
+  .risk { border:1px solid var(--line); border-radius:8px; padding:12px; margin-bottom:10px; }
   .risk .top { display:flex; gap:8px; align-items:center; font-weight:600; }
-  .risk .top .money { margin-left:auto; }
-  .risk .line { display:flex; justify-content:space-between; font-size:13px; color:var(--main-dark); padding:2px 0 2px 32px; }
-  .risk .own { display:flex; justify-content:space-between; font-weight:600; padding:6px 0 0 32px; border-top:1px dashed #dde2e5; margin-top:4px; }
+  .risk .top .i { font-size:20px; color:var(--red); }
+  .risk .top .money { margin-left:auto; font-size:17px; }
+  .risk .line { display:flex; justify-content:space-between; gap:8px; font-size:14px; color:var(--main-dark); padding:2px 0 2px 28px; }
+  .risk .line .i { margin-right:4px; }
+  .risk .own { display:flex; justify-content:space-between; align-items:center; gap:8px; font-weight:600; padding:8px 0 0 28px; border-top:1px dashed var(--line); margin-top:6px; color:var(--main-dark); }
   .risk .own.bad { color:var(--red); }
-  .risk details { font-size:13px; color:var(--muted); padding-left:32px; }
-  .voucher { display:flex; align-items:center; gap:10px; border:1px dashed var(--main); border-radius:6px; padding:10px; margin-bottom:8px; background:#f5fcfa; }
-  .voucher .grow { flex:1; font-size:14px; }
-  .voucher small { display:block; color:var(--muted); }
-  .voucher button { padding:7px 12px; border-radius:4px; border:1px solid var(--main); background:#fff; color:var(--main); cursor:pointer; font-size:13px; }
+  .risk details { font-size:14px; color:var(--muted); padding-left:28px; margin:2px 0 4px; }
+  .risk summary { cursor:pointer; display:inline-flex; align-items:center; gap:4px; min-height:32px; }
+  .voucher { display:flex; align-items:center; gap:10px; border:1px dashed var(--main); border-radius:8px; padding:12px; margin-bottom:8px; background:#f2f8f6; }
+  .voucher > .i { font-size:22px; color:var(--main-dark); }
+  .voucher .grow { flex:1; }
+  .voucher small { display:block; color:var(--muted); font-size:13px; margin-top:2px; }
+  .voucher button { display:inline-flex; align-items:center; gap:4px; min-height:40px; padding:0 14px; border-radius:6px; border:1px solid var(--main); background:#fff; color:var(--main-dark); cursor:pointer; font-size:14px; font-weight:500; white-space:nowrap; }
   .voucher button.on { background:var(--main); color:#fff; }
-  .voucher .free { font-size:13px; color:var(--main-dark); }
-  .bottom { position:fixed; bottom:0; left:0; right:0; background:#fff; box-shadow:0 -2px 8px rgba(0,0,0,.08); z-index:5; }
-  .bottom .inner { max-width:480px; margin:0 auto; padding:10px 16px; }
-  .bar { font-size:13px; margin-bottom:6px; }
-  .bar .lbl { display:flex; justify-content:space-between; }
-  .bar .track { height:6px; background:#e6eaed; border-radius:3px; overflow:hidden; margin-top:3px; }
+  .voucher .free { display:inline-flex; align-items:center; gap:4px; font-size:14px; font-weight:500; color:var(--main-dark); white-space:nowrap; }
+  .bottom { position:fixed; bottom:0; left:0; right:0; background:#fff; box-shadow:0 -4px 16px rgba(29,35,39,.08); z-index:5; }
+  .bottom .inner { max-width:480px; margin:0 auto; padding:10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .bar { font-size:14px; margin-bottom:6px; }
+  .bar .lbl { display:flex; justify-content:space-between; align-items:center; }
+  .bar .lbl span { display:inline-flex; align-items:center; gap:6px; }
+  .bar .track { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-top:4px; }
   .bar .fill { height:100%; background:var(--main); }
-  .bar.bad .fill, .bar.bad .lbl b { background:var(--red); color:var(--red); }
-  .bar.bad .lbl b { background:none; }
-  .bottom .btn { margin-top:6px; padding:11px; }
-  dialog { border:0; border-radius:10px; max-width:440px; width:calc(100% - 32px); padding:20px; }
-  dialog::backdrop { background:rgba(0,0,0,.4); }
-  dialog h2 { font-size:18px; }
-  dialog ul { padding-left:18px; font-size:14px; }
-  dialog p { font-size:14px; }
-  .big { font-size:26px; font-weight:700; }
+  .bar.bad .fill { background:var(--red); }
+  .bar.bad .lbl b { color:var(--red); }
+  .bottom .btn { margin-top:8px; padding:12px; }
+  dialog { border:0; border-radius:12px; max-width:440px; width:calc(100% - 32px); padding:24px 20px 20px; color:var(--text); box-shadow:0 12px 40px rgba(29,35,39,.25); }
+  dialog::backdrop { background:rgba(29,35,39,.45); }
+  dialog h2 { font-size:22px; margin-bottom:12px; }
+  dialog ul { padding-left:20px; }
+  dialog li { margin-bottom:6px; }
+  dialog p { margin:0 0 8px; }
+  .big { font-size:34px; line-height:1.2; font-weight:700; letter-spacing:-.02em; margin-bottom:12px; }
   .red { color:var(--red); } .green { color:var(--main-dark); }
-  .muted { color:var(--muted); font-size:12px; }
+  .muted { color:var(--muted); font-size:13px; }
   .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 </style>
 </head>
 <body>
+<!-- icons: lucide-static 1.73.0, ISC -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-trending-down" viewBox="0 0 24 24"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+<symbol id="i-bandage" viewBox="0 0 24 24"><path d="M10 10.01h.01"/><path d="M10 14.01h.01"/><path d="M14 10.01h.01"/><path d="M14 14.01h.01"/><path d="M18 6v12"/><path d="M6 6v12"/><rect x="2" y="6" width="20" height="12" rx="2"/></symbol>
+<symbol id="i-bone" viewBox="0 0 24 24"><path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+<symbol id="i-building-2" viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-clapperboard" viewBox="0 0 24 24"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></symbol>
+<symbol id="i-coffee" viewBox="0 0 24 24"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/></symbol>
+<symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/></symbol>
+<symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></symbol>
+<symbol id="i-hand-heart" viewBox="0 0 24 24"><path d="M11 14h2a2 2 0 0 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m14.45 13.39 5.05-4.694C20.196 8 21 6.85 21 5.75a2.75 2.75 0 0 0-4.797-1.837.276.276 0 0 1-.406 0A2.75 2.75 0 0 0 11 5.75c0 1.2.802 2.248 1.5 2.946L16 11.95"/><path d="m2 15 6 6"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a1 1 0 0 0-2.75-2.91"/></symbol>
+<symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+<symbol id="i-hospital" viewBox="0 0 24 24"><path d="M12 7v4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M14 9h-4"/><path d="M18 11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"/></symbol>
+<symbol id="i-id-card" viewBox="0 0 24 24"><path d="M13 19a4 4 0 00-8 0"/><path d="M16 10h2"/><path d="M16 14h2"/><circle cx="9" cy="12" r="3"/><rect x="2" y="5" width="20" height="14" rx="2"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+<symbol id="i-ribbon" viewBox="0 0 24 24"><path d="M12 11.22C11 9.997 10 9 10 8a2 2 0 0 1 4 0c0 1-.998 2.002-2.01 3.22"/><path d="m12 18 2.57-3.5"/><path d="M6.243 9.016a7 7 0 0 1 11.507-.009"/><path d="M9.35 14.53 12 11.22"/><path d="M9.35 14.53C7.728 12.246 6 10.221 6 7a6 5 0 0 1 12 0c-.005 3.22-1.778 5.235-3.43 7.5l3.557 4.527a1 1 0 0 1-.203 1.43l-1.894 1.36a1 1 0 0 1-1.384-.215L12 18l-2.679 3.593a1 1 0 0 1-1.39.213l-1.865-1.353a1 1 0 0 1-.203-1.422z"/></symbol>
+<symbol id="i-shopping-bag" viewBox="0 0 24 24"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></symbol>
+<symbol id="i-shopping-cart" viewBox="0 0 24 24"><path d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"/><path d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"/><circle cx="18" cy="20" r="2"/><circle cx="8" cy="20" r="2"/></symbol>
+<symbol id="i-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+<symbol id="i-train-front" viewBox="0 0 24 24"><path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/></symbol>
+<symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+<symbol id="i-utensils" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
 <main id="app"></main>
 <p id="status" class="sr-only" aria-live="polite"></p>
 <dialog id="summary"></dialog>
