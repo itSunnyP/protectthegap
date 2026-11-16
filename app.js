@@ -63,9 +63,28 @@ function calc(s) {
 const app = document.getElementById('app');
 const go = screen => { S.screen = screen; render(); scrollTo(0, 0); };
 
+// selector ที่หา element เดิมได้อีกหลัง render (innerHTML ทำให้ focus หาย)
+function focusKey(el) {
+  if (!el || !app.contains(el)) return null;
+  if (el.id) return '#' + el.id;
+  const a = [...el.attributes].find(a => a.name.startsWith('data-'));
+  if (a) return `[${a.name}="${CSS.escape(a.value)}"]`;
+  if (el.form?.id) return `#${el.form.id} ` + (el.name ? `[name="${el.name}"]` : 'button');
+  return null;
+}
+
 function render() {
+  const key = focusKey(document.activeElement), y = scrollY;
   const banner = DATA.isTestData ? '<div class="test-banner">⚠️ ตัวเลขทดสอบ ยังไม่ใช่ข้อมูลจริง</div>' : '';
   app.innerHTML = banner + { profile: profileView, shop: shopView, checkout: checkoutView }[S.screen]();
+  scrollTo(0, y);
+  if (key) app.querySelector(key)?.focus({ preventScroll: true });
+  // live region อยู่นอก #app จึงไม่โดนแทนที่ ประกาศงบ/gap เมื่อเปลี่ยน
+  if (S.screen !== 'profile') {
+    const c = calc(S);
+    document.getElementById('status').textContent =
+      `งบคงเหลือ ${baht(c.budgetLeft)}` + (S.screen === 'checkout' ? ` · gap ที่ต้องจ่าย ${baht(c.totalGap)}` : '');
+  }
 }
 
 function profileView() {
