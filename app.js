@@ -78,7 +78,7 @@ function focusKey(el) {
 function render() {
   const key = focusKey(document.activeElement), y = scrollY;
   const banner = DATA.isTestData ? `<div class="test-banner">${ico('triangle-alert')}ตัวเลขทดสอบ ยังไม่ใช่ข้อมูลจริง</div>` : '';
-  app.innerHTML = banner + { profile: profileView, shop: shopView, bill: billView, checkout: checkoutView }[S.screen]();
+  app.innerHTML = banner + { profile: profileView, shop: shopView, checkout: checkoutView }[S.screen]();
   scrollTo(0, y);
   if (key) app.querySelector(key)?.focus({ preventScroll: true });
   // live region อยู่นอก #app จึงไม่โดนแทนที่ ประกาศงบ/gap เมื่อเปลี่ยน
@@ -138,7 +138,7 @@ function shopView() {
   </section>
   <div class="bottom"><div class="inner">
     ${budgetBar(c)}
-    <button class="btn" data-go="bill" ${S.cart.length ? '' : 'disabled'}>${ico('shopping-cart')}ตะกร้า (${S.cart.length}) ${baht(c.cartTotal)} · ชำระเงิน</button>
+    <button class="btn" data-go="checkout" ${S.cart.length ? '' : 'disabled'}>${ico('shopping-cart')}ตะกร้า (${S.cart.length}) ${baht(c.cartTotal)} · ชำระเงิน</button>
   </div></div>`;
 }
 
@@ -156,34 +156,13 @@ function gapBar(c) {
     <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>`;
 }
 
-// จังหวะเฉลย: บิลค่าความเสี่ยงก้อนใหญ่ ก่อนเข้าหน้าโค้ดส่วนลด
-function billView() {
-  const c = calc(S);
-  return `
-  <div class="bill">
-    <button class="bill-back" data-go="shop" aria-label="กลับไปช้อป">${ico('arrow-left')}</button>
-    <h1 class="bill-head">เดี๋ยวก่อน… <span class="nowrap">ยังมีค่าความเสี่ยง</span></h1>
-    <p class="bill-sub">ตะกร้าของคุณ ${baht(c.cartTotal)}/เดือน แต่ค่าความเสี่ยงไม่ได้มาทุกเดือน ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้</p>
-    <div class="receipt">
-      <h2 class="r-title">${ico('heart-crack')}ใบแจ้งค่าความเสี่ยง</h2>
-      ${c.risks.map((r, n) => `<div class="r-line" style="--n:${n}">${ico(r.icon)}<span>${r.name}</span><b class="money">${baht(r.cost)}</b></div>`).join('')}
-      <div class="r-total" style="--n:${c.risks.length}">
-        <span>รวม ถ้าเกิดครบทุกเรื่อง</span>
-        <b class="money">${baht(c.totalRisk)}</b>
-        <span class="r-months">= เงินเดือนคุณ ${months(c.totalRisk)} เดือน</span>
-      </div>
-    </div>
-    <button class="btn" data-go="checkout">${ico('ticket')}ดูโค้ดส่วนลดค่าความเสี่ยง</button>
-  </div>`;
-}
-
 function checkoutView() {
   const c = calc(S);
   const free = activeDiscounts(S).filter(d => d.premium === 0);
   const insurance = DATA.discounts.filter(d => d.kind === 'insurance');
   const coversText = d => DATA.risks.filter(r => r.id in d.covers).map(r => r.name).join(', ');
   return `
-  <header><button data-go="bill" aria-label="กลับไปดูบิลค่าความเสี่ยง">${ico('arrow-left')}</button><h1>ทำการสั่งซื้อ</h1></header>
+  <header><button data-go="shop" aria-label="กลับไปช้อป">${ico('arrow-left')}</button><h1>ทำการสั่งซื้อ</h1></header>
 
   <section>
     <h2>${ico('shopping-cart')}สินค้า (รายเดือน)</h2>
@@ -200,6 +179,7 @@ function checkoutView() {
   <section>
     <h2>${ico('heart-crack')}ค่าความเสี่ยงที่ first jobber อาจเจอ</h2>
     <p class="hint">ค่าความเสี่ยงไม่ได้มาทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
+    <div class="risk-total"><span>รวม ถ้าเกิดครบทุกเรื่อง<small>= เงินเดือนคุณ ${months(c.totalRisk)} เดือน</small></span><b class="money">${baht(c.totalRisk)}</b></div>
     ${c.risks.map(r => `
       <div class="risk">
         <div class="top">${ico(r.icon)}<span>${r.name}</span><span class="money">${baht(r.cost)}</span></div>
@@ -247,16 +227,13 @@ function showSummary() {
   tips.push('ไม่จำเป็นต้องอุด gap ให้เป็น 0 ทุกช่อง ให้เริ่มจากความเสี่ยงที่เกิดบ่อยและบิลแพงก่อน');
   const dlg = document.getElementById('summary');
   dlg.innerHTML = `
-    <div class="receipt result">
-      <h2 class="r-title" id="sumTitle">${ico('shopping-bag')}สรุปคำสั่งซื้อ</h2>
-      <div class="stamp ${c.totalGap > 0 ? '' : 'ok'}">${c.totalGap > 0 ? 'ยังมี gap' : 'ครอบคลุมครบ'}</div>
-      <p class="r-label" style="margin-top:12px">gap ที่ต้องจ่าย</p>
-      <div class="big money ${c.totalGap > 0 ? 'red' : 'green'}">${baht(c.totalGap)}</div>
-      ${c.totalGap > 0 ? `<p class="r-months">= เงินเดือนคุณ ${months(c.totalGap)} เดือน</p>` : ''}
-      <div class="r-line"><span>งบคงเหลือต่อเดือน</span><b class="money ${c.budgetLeft < 0 ? 'red' : 'green'}">${baht(c.budgetLeft)}</b></div>
-      <ul>${tips.map(t => `<li>${t}</li>`).join('')}</ul>
-      <p class="muted">เพื่อการศึกษาเท่านั้น ไม่ใช่คำแนะนำให้ซื้อผลิตภัณฑ์ใด${DATA.isTestData ? ' · ตัวเลขทดสอบ' : ''}</p>
-    </div>
+    <h2 id="sumTitle">สรุปคำสั่งซื้อ</h2>
+    <p>gap ที่ต้องจ่าย</p>
+    <div class="big money ${c.totalGap > 0 ? 'red' : 'green'}">${baht(c.totalGap)}</div>
+    ${c.totalGap > 0 ? `<p class="muted">= เงินเดือนคุณ ${months(c.totalGap)} เดือน</p>` : ''}
+    <p>งบคงเหลือต่อเดือน <b class="money ${c.budgetLeft < 0 ? 'red' : 'green'}">${baht(c.budgetLeft)}</b></p>
+    <ul>${tips.map(t => `<li>${t}</li>`).join('')}</ul>
+    <p class="muted">เพื่อการศึกษาเท่านั้น ไม่ใช่คำแนะนำให้ซื้อผลิตภัณฑ์ใด${DATA.isTestData ? ' · ตัวเลขทดสอบ' : ''}</p>
     <button class="btn" data-close>กลับไปปรับตะกร้า</button>`;
   dlg.showModal();
 }
