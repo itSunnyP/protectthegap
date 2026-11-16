@@ -151,7 +151,7 @@ function budgetBar(c) {
 function gapBar(c) {
   const pct = c.totalRisk ? (c.totalGap / c.totalRisk) * 100 : 0;
   return `<div class="bar ${c.totalGap > 0 ? 'bad' : ''}">
-    <div class="lbl"><span>${ico('truck')}gap ที่ต้องจ่าย</span><b class="money">${baht(c.totalGap)}</b></div>
+    <div class="lbl"><span>${ico('heart-crack')}gap ที่ต้องจ่าย</span><b class="money">${baht(c.totalGap)}</b></div>
     <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>`;
 }
 
@@ -176,7 +176,7 @@ function checkoutView() {
   </section>
 
   <section>
-    <h2>${ico('truck')}ค่าความเสี่ยงที่ first jobber อาจเจอ</h2>
+    <h2>${ico('heart-crack')}ค่าความเสี่ยงที่ first jobber อาจเจอ</h2>
     <p class="hint">ค่าความเสี่ยงไม่ได้เก็บทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
     ${c.risks.map(r => `
       <div class="risk">
