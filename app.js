@@ -177,7 +177,7 @@ function checkoutView() {
 
   <section>
     <h2>${ico('heart-crack')}ค่าความเสี่ยงที่ first jobber อาจเจอ</h2>
-    <p class="hint">ค่าความเสี่ยงไม่ได้เก็บทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
+    <p class="hint">ค่าความเสี่ยงไม่ได้มาทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
     ${c.risks.map(r => `
       <div class="risk">
         <div class="top">${ico(r.icon)}<span>${r.name}</span><span class="money">${baht(r.cost)}</span></div>
