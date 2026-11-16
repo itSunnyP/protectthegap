@@ -94,7 +94,7 @@ function profileView() {
   return `
   <header><h1>${ico('shopping-bag')}ProtectTheGap</h1></header>
   <section>
-    <h2>เงินเดือนแรกมาแล้ว! ช้อปให้สุด…แต่อย่าลืมค่าส่ง</h2>
+    <h2>เงินเดือนแรกมาแล้ว! ช้อปให้สุด…แต่อย่าลืมค่าความเสี่ยง</h2>
     <p class="hint">กรอก 3 ข้อ ใช้เวลาไม่ถึง 30 วินาที</p>
     <form id="profile">
       <label for="salary">เงินเดือน (บาท)</label>
@@ -176,8 +176,8 @@ function checkoutView() {
   </section>
 
   <section>
-    <h2>${ico('truck')}ค่าขนส่ง: ความเสี่ยงที่ first jobber อาจเจอ</h2>
-    <p class="hint">ค่าส่งไม่ได้เก็บทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
+    <h2>${ico('truck')}ค่าความเสี่ยงที่ first jobber อาจเจอ</h2>
+    <p class="hint">ค่าความเสี่ยงไม่ได้เก็บทุกเดือน แต่ถ้าเกิดเรื่องขึ้น จะมาเป็นบิลก้อนนี้ แตะ "เกิดอะไรขึ้นได้บ้าง" เพื่อดูตัวอย่าง</p>
     ${c.risks.map(r => `
       <div class="risk">
         <div class="top">${ico(r.icon)}<span>${r.name}</span><span class="money">${baht(r.cost)}</span></div>
@@ -188,8 +188,8 @@ function checkoutView() {
   </section>
 
   <section>
-    <h2>${ico('ticket')}โค้ดส่วนลดค่าส่ง</h2>
-    <p class="hint">โค้ดฟรีใช้ให้อัตโนมัติ แต่ลดค่าส่งได้แค่บางส่วน</p>
+    <h2>${ico('ticket')}โค้ดส่วนลดค่าความเสี่ยง</h2>
+    <p class="hint">โค้ดฟรีใช้ให้อัตโนมัติ แต่ลดค่าความเสี่ยงได้แค่บางส่วน</p>
     ${free.map(d => `
       <div class="voucher">${ico(d.icon)}
         <div class="grow">${d.name}<small>ลด: ${coversText(d)}</small></div><span class="free">${ico('check')}ฟรี · ใช้แล้ว</span></div>`).join('') || '<p class="hint">คุณยังไม่มีโค้ดฟรี</p>'}
