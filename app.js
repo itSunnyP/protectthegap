@@ -131,7 +131,7 @@ function budgetBar(c) {
 function gapBar(c) {
   const pct = c.totalRisk ? (c.totalGap / c.totalRisk) * 100 : 0;
   return `<div class="bar ${c.totalGap > 0 ? 'bad' : ''}">
-    <div class="lbl"><span>🚚 ค่าส่งที่คุณต้องจ่ายเอง (gap)</span><b class="money">${baht(c.totalGap)}</b></div>
+    <div class="lbl"><span>🚚 gap ที่ต้องจ่าย</span><b class="money">${baht(c.totalGap)}</b></div>
     <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>`;
 }
 
@@ -206,7 +206,7 @@ function showSummary() {
   const dlg = document.getElementById('summary');
   dlg.innerHTML = `
     <h2>สรุปคำสั่งซื้อ</h2>
-    <p>ค่าส่งที่คุณต้องจ่ายเอง (gap)</p>
+    <p>gap ที่ต้องจ่าย</p>
     <div class="big ${c.totalGap > 0 ? 'red' : 'green'}">${baht(c.totalGap)}</div>
     <p>งบคงเหลือต่อเดือน <b class="${c.budgetLeft < 0 ? 'red' : 'green'}">${baht(c.budgetLeft)}</b></p>
     <ul>${tips.map(t => `<li>${t}</li>`).join('')}</ul>
